@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090d16">
+<title>Expense Manager — Personal Finance Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy: #0f172a;
+  --blue: #6366f1;        /* Electric Indigo primary accent */
+  --blue-hover: #4f46e5;
+  --teal: #0d9488;
+  --bg: #f2f4f7;          /* Platinum-pearl elegant background */
+  --card: #ffffff;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --red: #ef4444;
+  --gold: #f59e0b;
+  --green: #10b981;
+  --radius: 16px;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 6px 16px -3px rgba(15, 23, 42, 0.07), 0 3px 6px -3px rgba(15, 23, 42, 0.04);
+  --shadow-glow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--navy);
+  font:15px/1.6 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+header{
+  background:linear-gradient(135deg, #090d16 0%, #1e1b4b 100%);
+  color:white;
+  padding:36px max(24px, calc((100% - 1200px)/2));
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 20px rgba(9, 13, 22, 0.2);
+}
+header h1{margin:0;font-size:clamp(28px, 4vw, 38px); font-weight:800; letter-spacing: -0.03em;}
+
+main{max-width:1200px;margin:36px auto;padding:0 24px;}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+h2{margin:0; font-weight: 800; color: var(--navy); font-size: 24px; letter-spacing: -0.02em;}
+h3{margin:0 0 16px; font-weight: 700; color: var(--navy); font-size: 18px;}
+.muted{color:var(--muted); font-size: 14px;}
+
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-bottom:28px;}
+.card,.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:24px;
+  box-shadow:var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Highlighted Action Zones */
+.highlight-box {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border: 1.5px solid #c7d2fe;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.05);
+}
+
+/* Highlighted Chart Panel */
+.chart-panel{
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+  border: 1px solid #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+.badge.success { background: #f0fdf4; color: #16a34a; }
+.badge.purple { background: #f5f3ff; color: #7c3aed; }
+
+.metric-label{color:var(--muted);font-size:13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;}
+.metric{font-size:clamp(22px, 2.5vw, 28px);font-weight:800;margin-top:10px;overflow-wrap:anywhere; color: var(--navy); letter-spacing: -0.02em;}
+
+.content{display:grid;grid-template-columns: minmax(320px, 0.9fr) minmax(340px, 1.1fr);gap:24px;}
+label{display:block;font-weight:700;font-size:13px;margin:14px 0 6px; color: #334155;}
+input,select{
+  width:100%;
+  padding:12px 16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font:inherit;
+  background:#fff;
+  color:var(--navy);
+  transition: all 0.2s ease;
+}
+input:hover, select:hover{border-color: #94a3b8;}
+input:focus, select:focus{
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: var(--shadow-glow);
+}
+button{
+  border:0;
+  border-radius:12px;
+  padding:12px 20px;
+  background:var(--blue);
+  color:white;
+  font-weight:700;
+  font:inherit;
+  cursor:pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+}
+button:hover{background:var(--blue-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);}
+button:active{transform:translateY(0);}
+button.secondary{background:#f1f5f9;color:#334155; border: 1px solid var(--line); box-shadow: none;}
+button.secondary:hover{background: #e2e8f0; color: #0f172a; box-shadow: none;}
+button.danger{background:#fef2f2;color:var(--red); border: 1px solid #fecaca; box-shadow: none;}
+button.danger:hover{background:#fee2e2; box-shadow: none;}
+button.small{padding:7px 14px;font-size:12px; border-radius:8px; box-shadow: none;}
+
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+.full{grid-column:1/-1}
+.tablewrap{overflow-x:auto; margin-top: 8px;}
+table{width:100%;border-collapse:collapse;min-width:650px;}
+th,td{text-align:left;padding:15px 14px;border-bottom:1px solid var(--line);}
+th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; font-weight: 700; background: #fafbfc;}
+tr:hover td{background: #fcfdfe;}
+td.amount{text-align:right;font-variant-numeric:tabular-nums; font-weight: 700;}
+.bar{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:14px;}
+.bar>div{height:100%;background:var(--teal);width:0;transition:width .4s cubic-bezier(0.4, 0, 0.2, 1);}
+.bar.over>div{background:var(--red);}
+.empty{text-align:center;padding:48px 20px;color:var(--muted); font-weight: 500;}
+footer{max-width:1200px;margin:40px auto 20px;padding:0 20px;color:var(--muted);font-size:13px; text-align: center;}
+#chart{width:100%;max-height:280px;}
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.toolbar input{width:auto;min-width:180px; padding: 10px 14px;}
+
+/* Smart Suggestions Grid Styling */
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.suggestion-card {
+  padding: 20px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: var(--shadow-sm);
+}
+.suggestion-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.suggestion-card.danger { background: #fef2f2; border-color: #fecaca; }
+.suggestion-card.warning { background: #fffbeb; border-color: #fde68a; }
+.suggestion-card.success { background: #f0fdf4; border-color: #bbf7d0; }
+.suggestion-card.tip { background: #f8fafc; border-color: #cbd5e1; }
+.suggestion-card.pro { background: #f5f3ff; border-color: #ddd6fe; }
+
+.suggestion-title {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+}
+.suggestion-text {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .content{grid-template-columns:1fr;}
+}
+@media(max-width:500px){
+  .grid{grid-template-columns:1fr;}
+  .formgrid{grid-template-columns:1fr;}
+  .full{grid-column:auto;}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Expense Manager</h1>
+</header>
+
+<main>
+  <div class="topline">
+    <div>
+      <h2>Financial overview</h2>
+      <div class="muted" id="monthLabel" style="margin-top: 4px;"></div>
+    </div>
+    <div class="toolbar">
+      <label for="monthFilter" style="margin:0">Month</label>
+      <input id="monthFilter" type="month">
+    </div>
+  </div>
+
+  <section class="grid">
+    <div class="card">
+      <div class="metric-label">Monthly budget</div>
+      <div class="metric" id="budgetMetric">PKR 0</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">Total expenses</div>
+      <div class="metric" id="spentMetric">PKR 0</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">Remaining budget</div>
+      <div class="metric" id="remainingMetric">PKR 0</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">Budget used</div>
+      <div class="metric" id="usedMetric">0%</div>
+      <div class="bar" id="budgetBar"><div id="budgetBarFill"></div></div>
+    </div>
+  </section>
+
+  <section class="content">
+    <!-- Highlighted Action Panel for Budget & Expenses -->
+    <div class="panel highlight-box">
+      <div class="badge" style="background: #e0e7ff; color: #4338ca;">Quick Actions</div>
+      <h3>Monthly budget &amp; expenses</h3>
+      
+      <label for="budgetInput">Budget amount (PKR)</label>
+      <input id="budgetInput" type="number" min="0" step="1" placeholder="e.g. 100000">
+      <div class="actions"><button id="saveBudget">💾 Save budget</button></div>
+      
+      <hr style="border:0;border-top:1px solid #c7d2fe;margin:28px 0">
+      
+      <h3 id="formTitle">Add an expense</h3>
+      <form id="expenseForm">
+        <div class="formgrid">
+          <div class="full">
+            <label for="expenseName">Description</label>
+            <input id="expenseName" maxlength="70" required placeholder="e.g. Electricity bill">
+          </div>
+          <div>
+            <label for="expenseAmount">Amount (PKR)</label>
+            <input id="expenseAmount" type="number" min="0.01" step="0.01" required placeholder="e.g. 8500">
+          </div>
+          <div>
+            <label for="expenseDate">Date</label>
+            <input id="expenseDate" type="date" required>
+          </div>
+          <div class="full">
+            <label for="expenseCategory">Category</label>
+            <select id="expenseCategory">
+              <option>Groceries</option>
+              <option>Utilities</option>
+              <option>Transport</option>
+              <option>Education</option>
+              <option>Rent</option>
+              <option>Healthcare</option>
+              <option>Shopping</option>
+              <option>Dining</option>
+              <option>Entertainment</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" id="submitExpense">✨ Add expense</button>
+          <button type="button" class="secondary" id="cancelEdit" hidden>Cancel edit</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Highlighted Chart Panel -->
+    <div class="panel chart-panel">
+      <div class="badge">Visual Breakdown</div>
+      <h3>Spending by category</h3>
+      <canvas id="chart" aria-label="Spending by category chart"></canvas>
+      <p class="muted" id="chartFallback" hidden style="margin-top:20px;">Chart library could not load. Your expense list and totals still work.</p>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:24px">
+    <div class="topline">
+      <div>
+        <h3>Expense history</h3>
+        <span class="muted" id="expenseCount">0 expenses</span>
+      </div>
+      <div class="actions" style="margin:0">
+        <button class="secondary" id="exportCsv">Export CSV</button>
+        <button class="secondary" id="showAll">Show all months</button>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th style="text-align:right">Amount</th>
+            <th style="width: 140px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="expenseRows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="emptyState" hidden>No expenses found. Add one using the form above.</div>
+  </section>
+
+  <!-- Expanded Smart Savings Insights & Recommendations Panel -->
+  <section class="panel chart-panel" style="margin-top:24px;">
+    <div class="badge success">Smart Advisor AI</div>
+    <h3>Advanced Savings &amp; Budgeting Insights</h3>
+    <p class="muted" style="margin-bottom: 8px;">Comprehensive, personalized financial strategies and localized tips tailored to your spending habits.</p>
+    <div class="suggestions-grid" id="savingsSuggestionsContent">
+      <!-- Dynamic suggestions injected via JS -->
+    </div>
+  </section>
+</main>
+
+<footer>
+  Expense Manager &bull; Personal finance &amp; budgeting tool. Data is securely saved locally in your browser. Export a CSV backup periodically.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const KEY='expense-manager-v1';
+const today=new Date();
+const monthNow=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+const dateNow=`${monthNow}-${String(today.getDate()).padStart(2,'0')}`;
+const money=n=>'PKR '+Number(n||0).toLocaleString('en-PK',{maximumFractionDigits:2});
+let data={budgets:{},expenses:[]},editingId=null,chart=null,showAllMonths=false;
+
+try{
+  const saved=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(saved&&typeof saved==='object'){
+    data.budgets=saved.budgets||{};
+    data.expenses=Array.isArray(saved.expenses)?saved.expenses:[];
+  }
+}catch(e){console.warn('Could not read saved Expense Manager data',e);}
+
+const monthOf=date=>String(date||'').slice(0,7);
+const selectedMonth=()=> $('monthFilter').value||monthNow;
+
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify(data));
+  }catch(e){alert('Could not save in this browser. Check available storage space or privacy settings.');}
+}
+
+function getActiveExpenses(){
+  if(showAllMonths){
+    return [...data.expenses].sort((a,b)=>b.date.localeCompare(a.date));
+  }
+  return data.expenses.filter(x=>monthOf(x.date)===selectedMonth()).sort((a,b)=>b.date.localeCompare(a.date));
+}
+
+function render(){
+  const month=selectedMonth(),items=getActiveExpenses(),budget=Number(data.budgets[month]||0),total=items.reduce((s,x)=>s+Number(x.amount),0),remaining=budget-total,pct=budget>0?total/budget*100:0;
+  
+  if(showAllMonths){
+    $('monthLabel.textContent') // safety check handled below
+    $('monthLabel').textContent = `All Months (${data.expenses.length} total expenses)`;
+  } else {
+    $('monthLabel').textContent=new Date(month+'-02').toLocaleDateString('en-PK',{month:'long',year:'numeric'});
+  }
+
+  $('budgetMetric').textContent=money(budget);
+  $('spentMetric').textContent=money(total);
+  $('remainingMetric').textContent=money(remaining);
+  $('remainingMetric').style.color=remaining<0?'var(--red)':'var(--navy)';
+  $('usedMetric').textContent=pct.toFixed(1)+'%';
+  $('budgetBarFill').style.width=Math.min(100,Math.max(0,pct))+'%';
+  $('budgetBar').classList.toggle('over',remaining<0);
+  $('budgetInput').value=data.budgets[month]??'';
+  $('expenseCount').textContent=`${items.length} expense${items.length===1?'':'s'}`;
+  
+  $('expenseRows').replaceChildren();
+  $('emptyState').hidden=items.length!==0;
+  
+  items.forEach(item=>{
+    const tr=document.createElement('tr');
+    [item.date,item.name,item.category].forEach(v=>{
+      const td=document.createElement('td');
+      td.textContent=v;
+      tr.append(td);
+    });
+    
+    const amount=document.createElement('td');
+    amount.className='amount';
+    amount.textContent=money(item.amount);
+    tr.append(amount);
+    
+    const actions=document.createElement('td');
+    const edit=document.createElement('button');
+    edit.className='small secondary';
+    edit.textContent='Edit';
+    edit.onclick=()=>startEdit(item.id);
+    
+    const del=document.createElement('button');
+    del.className='small danger';
+    del.textContent='Delete';
+    del.style.marginLeft='6px';
+    del.onclick=()=>{
+      if(confirm('Delete this expense?')){
+        data.expenses=data.expenses.filter(x=>x.id!==item.id);
+        save();
+        render();
+      }
+    };
+    
+    actions.append(edit,del);
+    tr.append(actions);
+    $('expenseRows').append(tr);
+  });
+  
+  drawChart(items);
+  updateSavingsSuggestions(items, budget, total, remaining, pct);
+}
+
+function updateSavingsSuggestions(items, budget, total, remaining, pct){
+  const container = $('savingsSuggestionsContent');
+  if(!container) return;
+  container.replaceChildren();
+
+  const suggestions = [];
+
+  // 1. Budget health suggestion
+  if(budget <= 0){
+    suggestions.push({
+      title: '💡 Set your monthly budget',
+      text: 'Enter your target monthly budget in the quick actions panel above to track savings and unlock live financial limits.',
+      type: 'tip'
+    });
+  } else if(remaining < 0){
+    suggestions.push({
+      title: '🚨 Budget exceeded alert!',
+      text: `You have overspent your target by ${money(Math.abs(remaining))}. Immediately pause all non-essential dining out and shopping until next month.`,
+      type: 'danger'
+    });
+  } else if(pct >= 85){
+    suggestions.push({
+      title: '⚠️ Budget limit approaching',
+      text: `You have utilized ${pct.toFixed(1)}% of your allowance. Restrict spending strictly to critical bills and core groceries for the remainder of the month.`,
+      type: 'warning'
+    });
+  } else if(pct <= 50 && budget > 0){
+    suggestions.push({
+      title: '🌟 Exceptional savings pace',
+      text: `You have successfully saved ${money(remaining)} (${(100-pct).toFixed(1)}% of your budget). Consider stashing this surplus into a secure emergency reserve or profit-bearing halal savings account.`,
+      type: 'success'
+    });
+  } else {
+    suggestions.push({
+      title: '✅ Finances on track',
+      text: `You have ${money(remaining)} remaining. Maintain your current spending composure to finish the month well within your comfort zone.`,
+      type: 'tip'
+    });
+  }
+
+  // 2. Category specific insight
+  if(items.length > 0){
+    const catTotals = {};
+    items.forEach(x => catTotals[x.category] = (catTotals[x.category] || 0) + Number(x.amount));
+    const sortedCats = Object.entries(catTotals).sort((a,b) => b[1] - a[1]);
+    const topCat = sortedCats[0];
+    
+    if(topCat){
+      const catShare = ((topCat[1] / total) * 100).toFixed(0);
+      suggestions.push({
+        title: `📊 Dominant Expense: ${topCat[0]}`,
+        text: `Your largest outlay is in ${topCat[0]} at ${money(topCat[1])} (${catShare}% of overall expenses). Look for wholesale alternatives, bulk buying, or targeted cuts here.`,
+        type: 'pro'
+      });
+    }
+  }
+
+  // 3. Expanded Practical Money-Saving Strategies (Rotated / Included)
+  const expandedTips = [
+    {
+      title: '🛒 Wholesale & Bulk Buying',
+      text: 'Purchase dry goods, pulses, cooking oil, and household cleaning supplies in bulk from wholesale markets rather than buying small weekly packs from convenience shops.'
+    },
+    {
+      title: '⏱️ The 48-Hour Purchase Rule',
+      text: 'Before buying clothes, gadgets, or non-essential items online or in-store, enforce a mandatory 48-hour waiting period to eliminate impulsive emotional spending.'
+    },
+    {
+      title: '⚡ Inverter AC & Utility Control',
+      text: 'Keep inverter ACs set at 26°C and shift heavy appliances (washing machines, irons, water pumps) to off-peak hours to sustainably lower monthly electricity bills.'
+    },
+    {
+      title: '🛡️ Emergency Fund Milestone',
+      text: 'Build a safety reserve equal to 3 months of essential living expenses (rent, utilities, and groceries) before committing funds to luxury or discretionary purchases.'
+    },
+    {
+      title: '🍲 Batch Cooking & Meal Prep',
+      text: 'Plan weekly meal menus ahead of time to eliminate food waste and minimize reliance on expensive restaurant dining and delivery apps.'
+    },
+    {
+      title: '🚗 Commuting & Vehicle Efficiency',
+      text: 'Maintain correct tire pressure and keep up with regular engine tune-ups to boost fuel mileage (km/liter). Explore carpooling or public transport routes.'
+    }
+  ];
+
+  const tipIndex = Math.abs(selectedMonth().split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % expandedTips.length;
+  const secondaryTipIndex = (tipIndex + 2) % expandedTips.length;
+  
+  suggestions.push({
+    title: expandedTips[tipIndex].title,
+    text: expandedTips[tipIndex].text,
+    type: 'pro'
+  });
+
+  suggestions.push({
+    title: expandedTips[secondaryTipIndex].title,
+    text: expandedTips[secondaryTipIndex].text,
+    type: 'tip'
+  });
+
+  suggestions.forEach(s => {
+    const card = document.createElement('div');
+    card.className = `suggestion-card ${s.type}`;
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'suggestion-title';
+    titleEl.textContent = s.title;
+
+    const textEl = document.createElement('div');
+    textEl.className = 'suggestion-text';
+    textEl.textContent = s.text;
+
+    card.append(titleEl, textEl);
+    container.append(card);
+  });
+}
+
+function drawChart(items){
+  const totals={};
+  items.forEach(x=>totals[x.category]=(totals[x.category]||0)+Number(x.amount));
+  if(!window.Chart){$('chartFallback').hidden=false;return;}
+  $('chartFallback').hidden=true;
+  if(chart)chart.destroy();
+  
+  const hasExpenses = items.length > 0;
+  const labels = hasExpenses ? Object.keys(totals) : ['No expenses added'];
+  const dataValues = hasExpenses ? labels.map(k => totals[k]) : [1];
+  const backgroundColors = hasExpenses ? ['#6366f1','#0d9488','#f59e0b','#8b5cf6','#ec4899','#3b82f6','#10b981','#d97706','#64748b','#4f46e5'] : ['#e2e8f0'];
+
+  chart=new Chart($('chart'),{
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{
+        data: dataValues,
+        backgroundColor: backgroundColors,
+        borderWidth:2,
+        borderColor:'#fff'
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      plugins:{
+        legend:{
+          position:'bottom', 
+          labels:{
+            boxWidth:12, 
+            font:{family:'Plus Jakarta Sans', size:12}
+          }
+        },
+        tooltip: {
+          enabled: hasExpenses
+        }
+      }
+    }
+  });
+}
+
+$('monthFilter').value=monthNow;
+$('expenseDate').value=dateNow;
+
+$('monthFilter').addEventListener('change',()=>{
+  showAllMonths = false;
+  $('showAll').textContent = 'Show all months';
+  cancelEdit();
+  render();
+});
+
+$('saveBudget').addEventListener('click',()=>{
+  const v=Number($('budgetInput').value);
+  if(!Number.isFinite(v)||v<0){alert('Enter a valid budget amount (zero or more).');return;}
+  data.budgets[selectedMonth()]=v;
+  save();
+  render();
+});
+
+$('expenseForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('expenseName').value.trim(),
+        amount=Number($('expenseAmount').value),
+        date=$('expenseDate').value,
+        category=$('expenseCategory').value;
+        
+  if(!name||!Number.isFinite(amount)||amount<=0||!date){
+    alert('Please enter a description, valid positive amount, and date.');
+    return;
+  }
+  
+  if(editingId){
+    const item=data.expenses.find(x=>x.id===editingId);
+    if(item)Object.assign(item,{name,amount,date,category});
+  } else {
+    data.expenses.push({
+      id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
+      name,amount,date,category
+    });
+  }
+  
+  save();
+  cancelEdit();
+  $('expenseForm').reset();
+  $('expenseDate').value=dateNow;
+  render();
+});
+
+function startEdit(id){
+  const x=data.expenses.find(x=>x.id===id);
+  if(!x)return;
+  editingId=id;
+  $('formTitle').textContent='Edit expense';
+  $('expenseName').value=x.name;
+  $('expenseAmount').value=x.amount;
+  $('expenseDate').value=x.date;
+  $('expenseCategory').value=x.category;
+  $('submitExpense').textContent='💾 Save changes';
+  $('cancelEdit').hidden=false;
+  $('expenseName').focus();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cancelEdit(){
+  editingId=null;
+  $('formTitle').textContent='Add an expense';
+  $('submitExpense').textContent='✨ Add expense';
+  $('cancelEdit').hidden=true;
+}
+
+$('cancelEdit').addEventListener('click',()=>{
+  cancelEdit();
+  $('expenseForm').reset();
+  $('expenseDate').value=dateNow;
+});
+
+$('showAll').addEventListener('click',()=>{
+  showAllMonths = !showAllMonths;
+  $('showAll').textContent = showAllMonths ? 'Filter by month' : 'Show all months';
+  render();
+});
+
+$('exportCsv').addEventListener('click',()=>{
+  const rows=[['Date','Description','Category','Amount (PKR)'],...getActiveExpenses().map(x=>[x.date,x.name,x.category,x.amount])];
+  const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`ExpenseManager_${showAllMonths ? 'All_Months' : selectedMonth()}_Expenses.csv`;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+
+render();
+})();
+</script>
+</body>
+</html>
